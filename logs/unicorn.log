@@ -1,0 +1,21 @@
+09:32:58 От  Владимир Бобровников  кому  Все:
+	для анотации параметров добавь:
+	from falcon import Request, Response
+	...
+	def on_get(self, req: Request, resp: Response, note_id):
+09:48:53 От  Bootcamp teacher  кому  Все:
+	https://github.com/Darkheir/falcon-filtering-hook
+10:29:01 От  Semyon  кому  Все:
+	У меня нет
+11:06:30 От  Bootcamp teacher  кому  Все:
+	https://github.com/falconry/falcon-policy
+11:07:16 От  Bootcamp teacher  кому  Все:
+	https://github.com/trendiguru/falcon-jwt
+
+https://pypi.org/project/falcon-auth2/
+От Владимир Бобровников всем 04:41 PM
+https://github.com/trendiguru/falcon-jwt
+От Danya Alexandrov всем 04:41 PM
+https://falcon-auth.readthedocs.io/en/latest/_modules/falcon_auth/backends.html
+От Владимир Бобровников всем 04:41 PM
+https://github.com/falconry/falcon-policy
