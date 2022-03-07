@@ -5,7 +5,8 @@ class User:
         self.name = name
         self.login = login
         self.password = password
-        self.token = 'bG9naW46cGFzc3dvcmQ='
+        self.access_token = None
+        self.refresh_token = None
 
 
 user = User(name='Alex', login='login', password='password')

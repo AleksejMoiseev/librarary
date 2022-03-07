@@ -1,6 +1,9 @@
 from wsgiref.simple_server import make_server
 from algoritmika.exception import NotStatusExceptioms
-from algoritmika.middleware import JSONTranslator, BasicAuthMiddleware, JWTAuthMiddleware
+from algoritmika.middleware import (
+    JSONTranslator, BasicAuthMiddleware, JWTAuthMiddleware, JWTUserAuthMiddleware,
+    JWTUserAuthView,
+)
 import falcon
 from algoritmika.views import (
     ThingsResource, UserController, UsersController,
@@ -19,7 +22,7 @@ from algoritmika.views import (
 
 middleware = [
     JSONTranslator(),
-    JWTAuthMiddleware(),
+    JWTUserAuthMiddleware(),
 
 ]
 
@@ -45,7 +48,7 @@ app.add_route('/issues/{entity_id}', IssueRetrieveView())
 app.add_route('/sorted-issues/', SortedIssue())
 app.add_route('/status/{status}', TackNumberFour())
 app.add_route('/filters/', FilterBaseView())
-app.add_route('/login/', AuthLogin())
+app.add_route('/login/', JWTUserAuthView())
 
 if __name__ == '__main__':
     with make_server(host="127.0.0.1", port=8003, app=app) as httpd:

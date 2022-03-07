@@ -84,19 +84,75 @@ class JWTAuthMiddleware:
                         "access_token": self.access_token
                     }
                 else:
-                    print('!!!', 'Incorrect refresh token')
                     raise falcon.HTTPUnauthorized(description='Incorrect refresh token')
             else:
                 raise falcon.HTTPMethodNotAllowed(allowed_methods=['POST', 'PUT'])
         else:
             data = req.get_header("Authorization").split(' ')
             if not (data[0] == BEARER and len(data) == 2):
-                print("AAAAAAAA")
                 raise falcon.HTTPUnauthorized(description='Invalid headers token')
             token = data[1]
-            print(token, self.access_token)
             if token == self.access_token:
                 resp.status = falcon.HTTP_200
             else:
-                print("SSSSSSSSSSSS")
                 raise falcon.HTTPUnauthorized(description='Invalid headers token')
+
+
+class JWTUserAuthMiddleware:
+
+    def process_resource(self, req: Request, resp: Response, resource, params):
+        if isinstance(resource, (NoteListCreateView,)):
+            return
+        if req.path == "/login/":
+            return
+
+        data = req.get_header("Authorization").split(' ')
+        token_auth = self.validate_data(data)
+        token = token_auth["value"]
+        if token != user.access_token:
+            raise falcon.HTTPUnauthorized(description='Invalid headers token')
+
+    @staticmethod
+    def validate_data(data):
+        if not (data[0] == BEARER and len(data) == 2):
+            raise falcon.HTTPUnauthorized(description='Data is not valid')
+        return {
+            "name": data[0],
+            "value": data[1]
+        }
+
+
+class JWTUserAuthView:
+
+    def on_post(self, req, resp):
+        data = req.get_media()
+        login = data.get('login')
+        password = data.get('password')
+        if not (login and password):
+            raise falcon.HTTPUnauthorized(description='The request must contain a login and password')
+        if login == user.login and password == user.password:
+
+            if user.refresh_token and not is_live_refresh_token(user.refresh_token):
+                user.refresh_token, user.access_token = None, None
+
+            if not user.access_token or not user.refresh_token:
+                user.refresh_token, user.access_token = get_jwt_token()
+
+            resp.body = {
+                "refresh_token": user.refresh_token,
+                "access_token": user.access_token
+            }
+            resp.status = falcon.HTTP_200
+
+    def on_put(self, req, resp):
+        data = req.get_header("Authorization").split(' ')
+        token_auth = JWTUserAuthMiddleware.validate_data(data)
+        token = token_auth["value"]
+        if token == user.refresh_token:
+            user.refresh_token, user.access_token = get_jwt_token()
+            resp.body = {
+                "refresh_token": user.refresh_token,
+                "access_token": user.access_token
+            }
+        else:
+            raise falcon.HTTPUnauthorized(description='Incorrect refresh token')
