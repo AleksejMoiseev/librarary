@@ -1,0 +1,9 @@
+.idea/
+algoritmika/__pycache__/
+ __pycache__/
+algoritmika/books/__pycache__/
+algoritmika/core/__pycache__/
+algoritmika/issues/__pycache__/
+algoritmika/library/__pycache__/
+algoritmika/notes/__pycache__/
+algoritmika/users/__pycache__/
