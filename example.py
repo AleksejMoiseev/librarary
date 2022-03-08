@@ -25,6 +25,7 @@ from algoritmika.views import (
 )
 
 from algoritmika.issues.views import IssuesListCreateView, IssuesRetrieveView
+from algoritmika.issues.exceptions import IssuesNotFoundEntity
 
 middleware = [
     JSONTranslator(),
@@ -39,6 +40,7 @@ app.add_error_handler(UserNotFoundException)
 app.add_error_handler(NotFoundEntity)
 app.add_error_handler(InccorectedRequestException)
 app.add_error_handler(NotesNotFoundEntity)
+app.add_error_handler(IssuesNotFoundEntity)
 
 # Resources are represented by long-lived class instances
 things = ThingsResource()
@@ -54,10 +56,10 @@ app.add_route('/users-1/', UserListCreateView())
 app.add_route('/users/{user_id}', UserRetrieveController())
 app.add_route('/users-1/{user_id}', UserRetrieveView())
 app.add_route('/books/{book_id}', books_controller)
-app.add_route('/notes/{note_id}', NotesRetrieveView())
+app.add_route('/notes/{pk}', NotesRetrieveView())
 app.add_route('/notes/', NotesListCreateView())
 app.add_route('/issues/', IssuesListCreateView())
-app.add_route('/issues/{note_id}', IssuesRetrieveView())
+app.add_route('/issues/{pk}', IssuesRetrieveView())
 app.add_route('/sorted-issues/', SortedIssue())
 app.add_route('/status/{status}', TackNumberFour())
 app.add_route('/filters/', FilterBaseView())

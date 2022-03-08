@@ -34,11 +34,11 @@ class BaseRetrieveView:
     storage: DICTStorage
     exception: Exception()
 
-    def on_put(self, req: Request, resp: Response, note_id):
+    def on_put(self, req: Request, resp: Response, pk):
         params = req.get_media()
         if not params:
             raise self.exception
-        idx, user = self.storage.get(int(note_id))
+        idx, user = self.storage.get(int(pk))
         user_updated = self.storage.update(user, params)
         resp.body = {
             'id': user_updated.pk,
@@ -46,17 +46,17 @@ class BaseRetrieveView:
         }
         resp.status = falcon.HTTP_200
 
-    def on_patch(self, req: Request, resp: Response, note_id):
-        self.on_put(req, resp, int(note_id))
+    def on_patch(self, req: Request, resp: Response, pk):
+        self.on_put(req, resp, int(pk))
 
-    def on_get(self, req: Request, resp: Response, note_id):
-        idx, user = self.storage.get(int(note_id))
+    def on_get(self, req: Request, resp: Response, pk):
+        idx, user = self.storage.get(int(pk))
         resp.body = {
             'id': user.pk,
             'name': user.name,
         }
         resp.status = falcon.HTTP_200
 
-    def on_delete(self, req: Request, resp: Response, note_id):
-        resp.body = self.storage.delete(int(note_id))
+    def on_delete(self, req: Request, resp: Response, pk):
+        resp.body = self.storage.delete(int(pk))
         resp.status = falcon.HTTP_200
