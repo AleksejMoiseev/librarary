@@ -109,7 +109,7 @@ class JWTUserAuthMiddleware:
         data = req.get_header("Authorization", required=True).split(' ')
         token_auth = self.validate_data(data)
         token = token_auth["value"]
-        if token != user.access_token or not is_valid_access_token(token):
+        if not is_valid_access_token(token):
             raise falcon.HTTPUnauthorized(description='Invalid headers token')
 
     @staticmethod

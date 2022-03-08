@@ -24,7 +24,7 @@ from algoritmika.users.views import UserListCreateController, UserRetrieveContro
 
 middleware = [
     JSONTranslator(),
-    #JWTUserAuthMiddleware(),
+    JWTUserAuthMiddleware(),
 
 ]
 
