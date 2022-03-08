@@ -31,11 +31,23 @@ def get_jwt_token():
     return refresh_token, access_token
 
 
-def is_live_refresh_token(token):
+def is_valid_refresh_token(token):
     try:
         jwt.decode(
             token,
             key=JWT_PARAMETERS["key_refresh_token"],
+            algorithms=[JWT_PARAMETERS["algorithms"], ]
+        )
+    except (ExpiredSignatureError, InvalidSignatureError):
+        return False
+    return True
+
+
+def is_valid_access_token(token):
+    try:
+        jwt.decode(
+            token,
+            key=JWT_PARAMETERS["key_access_token"],
             algorithms=[JWT_PARAMETERS["algorithms"], ]
         )
     except (ExpiredSignatureError, InvalidSignatureError):

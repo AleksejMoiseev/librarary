@@ -11,6 +11,8 @@ from algoritmika.views import (
     IssueRetrieveView, IssueListCreateView, SortedIssue,
     TackNumberFour, FilterBaseView, AuthLogin
 )
+from algoritmika.users.exceptions import UserNotFoundException
+from algoritmika.users.views import UserListCreateController, UserRetrieveController
 
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
@@ -22,12 +24,13 @@ from algoritmika.views import (
 
 middleware = [
     JSONTranslator(),
-    JWTUserAuthMiddleware(),
+    #JWTUserAuthMiddleware(),
 
 ]
 
 app = falcon.App(middleware=middleware)
 app.add_error_handler(NotStatusExceptioms)
+app.add_error_handler(UserNotFoundException)
 
 # Resources are represented by long-lived class instances
 things = ThingsResource()
@@ -38,8 +41,8 @@ books_controller = BookBaseViews()
 
 # things will handle all requests to the '/things' URL path
 app.add_route('/things', things)
-app.add_route('/users/', users_controller)
-app.add_route('/users/{user_id}', user_controller)
+app.add_route('/users/', UserListCreateController())
+app.add_route('/users/{user_id}', UserRetrieveController())
 app.add_route('/books/{book_id}', books_controller)
 app.add_route('/notes/{entity_id}', NoteRetrieveView())
 app.add_route('/notes/', NoteListCreateView())

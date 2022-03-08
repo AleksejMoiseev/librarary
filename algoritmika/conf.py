@@ -4,6 +4,12 @@ config = [
     ("GET", '/notes'),
 ]
 
+jwt_skip_rules = [
+    # method, endpoint
+    ("POST", '/login/'),
+    ("PUT", '/login/'),
+]
+
 JWT_PARAMETERS = {
     "lifetime": {'seconds': 30},
     "key_refresh_token": "refresh_token",
