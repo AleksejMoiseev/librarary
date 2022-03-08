@@ -18,6 +18,11 @@ from algoritmika.users.views import (
     UserRetrieveView, UserListCreateView
 )
 
+from algoritmika.library.views import (
+    LibraryCreateView,UsersLibraryView, BooksLibraryView
+)
+
+from algoritmika.library.exceptions import InccorectedRequestException
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
 # transitions, which map to HTTP verbs.
@@ -37,6 +42,7 @@ app.add_error_handler(NotStatusExceptioms)
 app.add_error_handler(BaseNotFoundException)
 app.add_error_handler(UserNotFoundException)
 app.add_error_handler(NotFoundEntity)
+app.add_error_handler(InccorectedRequestException)
 
 # Resources are represented by long-lived class instances
 things = ThingsResource()
@@ -60,6 +66,12 @@ app.add_route('/sorted-issues/', SortedIssue())
 app.add_route('/status/{status}', TackNumberFour())
 app.add_route('/filters/', FilterBaseView())
 app.add_route('/login/', JWTUserAuthView())
+
+"""Library"""
+
+app.add_route('/bookss/{action}', LibraryCreateView())
+app.add_route('/bookss/', BooksLibraryView())
+app.add_route('/userss/', UsersLibraryView())
 
 if __name__ == '__main__':
     with make_server(host="127.0.0.1", port=8003, app=app) as httpd:

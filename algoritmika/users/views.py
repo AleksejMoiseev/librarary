@@ -1,7 +1,9 @@
 import falcon
 from falcon import Request, Response
 
-from algoritmika.users.exceptions import UserNotFoundException
+from algoritmika.users.exceptions import (
+    DataNotFoundException, UserNameNotFoundException
+)
 from algoritmika.users.models import UserBaseView, user_storage
 
 
@@ -15,10 +17,10 @@ class UserListCreateController(UserBaseView):
     def on_post(self, req: Request, resp: Response):
         data = req.get_media()
         if not data:
-            raise UserNotFoundException()
+            raise DataNotFoundException()
         name = data.get('name')
         if not name:
-            raise UserNotFoundException()
+            raise UserNameNotFoundException()
         user = self.create(name=name)
         resp.body = {
             'id': user.pk,
@@ -32,7 +34,7 @@ class UserRetrieveController(UserBaseView):
     def on_put(self, req: Request, resp: Response, user_id):
         params = req.get_media()
         if not params:
-            raise UserNotFoundException()
+            raise DataNotFoundException()
         idx, user = self.get(int(user_id))
         user_updated = self.update(user, params)
         resp.body = {
@@ -67,10 +69,10 @@ class UserListCreateView:
     def on_post(self, req: Request, resp: Response):
         data = req.get_media()
         if not data:
-            raise UserNotFoundException()
+            raise DataNotFoundException()
         name = data.get('name')
         if not name:
-            raise UserNotFoundException()
+            raise UserNameNotFoundException()
         user = user_storage.create(name=name)
         resp.body = {
             'id': user.pk,
@@ -83,7 +85,7 @@ class UserRetrieveView:
     def on_put(self, req: Request, resp: Response, user_id):
         params = req.get_media()
         if not params:
-            raise UserNotFoundException()
+            raise DataNotFoundException()
         idx, user = user_storage.get(int(user_id))
         user_updated = user_storage.update(user, params)
         resp.body = {
