@@ -1,5 +1,6 @@
 from wsgiref.simple_server import make_server
 from algoritmika.exception import NotStatusExceptioms
+from algoritmika.core.exceptions import BaseNotFoundException, NotFoundEntity
 from algoritmika.middleware import (
     JSONTranslator, BasicAuthMiddleware, JWTAuthMiddleware, JWTUserAuthMiddleware,
     JWTUserAuthView,
@@ -9,10 +10,13 @@ from algoritmika.views import (
     ThingsResource, UserController, UsersController,
     BookBaseViews, NoteListCreateView, NoteRetrieveView,
     IssueRetrieveView, IssueListCreateView, SortedIssue,
-    TackNumberFour, FilterBaseView, AuthLogin
+    TackNumberFour, FilterBaseView,
 )
 from algoritmika.users.exceptions import UserNotFoundException
-from algoritmika.users.views import UserListCreateController, UserRetrieveController
+from algoritmika.users.views import (
+    UserListCreateController, UserRetrieveController,
+    UserRetrieveView, UserListCreateView
+)
 
 # Falcon follows the REST architectural style, meaning (among
 # other things) that you think in terms of resources and state
@@ -24,13 +28,15 @@ from algoritmika.users.views import UserListCreateController, UserRetrieveContro
 
 middleware = [
     JSONTranslator(),
-    JWTUserAuthMiddleware(),
+    #JWTUserAuthMiddleware(),
 
 ]
 
 app = falcon.App(middleware=middleware)
 app.add_error_handler(NotStatusExceptioms)
+app.add_error_handler(BaseNotFoundException)
 app.add_error_handler(UserNotFoundException)
+app.add_error_handler(NotFoundEntity)
 
 # Resources are represented by long-lived class instances
 things = ThingsResource()
@@ -42,7 +48,9 @@ books_controller = BookBaseViews()
 # things will handle all requests to the '/things' URL path
 app.add_route('/things', things)
 app.add_route('/users/', UserListCreateController())
+app.add_route('/users-1/', UserListCreateView())
 app.add_route('/users/{user_id}', UserRetrieveController())
+app.add_route('/users-1/{user_id}', UserRetrieveView())
 app.add_route('/books/{book_id}', books_controller)
 app.add_route('/notes/{entity_id}', NoteRetrieveView())
 app.add_route('/notes/', NoteListCreateView())

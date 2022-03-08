@@ -1,6 +1,6 @@
 # файл gunicorn.conf.py
 # запускаем на IP:port
-bind = "0.0.0.0:8000"
+bind = "0.0.0.0:8001"
 # или через сокет
 # bind = "unix:/path/to/app.sock"
 # для некоторых фреймворков можно указать worker_class

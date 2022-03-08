@@ -4,9 +4,12 @@ from algoritmika.core.exceptions import BaseNotFoundException
 
 
 class Base:
+    count = 0
 
     def __init__(self, name):
         self.name = name
+        self.pk = self.count
+        Base.count += 1
 
     def __str__(self):
         return f"{self.name}"
@@ -46,42 +49,15 @@ class AbstractStorage(ABC):
     def delete(self, entity_id):
         pass
 
-
-class BaseView(ABC):
-    """
-    Storage
-    """
-    db = None
-
     @abstractmethod
-    def get_entities(self, limit=None, offset=0):
-        pass
-
-    @abstractmethod
-    def get_entity(self, pk):
-        pass
-
-    @abstractmethod
-    def save(self, entity):
-        pass
-
-    @abstractmethod
-    def delete(self, entity_id):
-        pass
-
-    @abstractmethod
-    def update(self, pk):
-        pass
-
-    @abstractmethod
-    def create(self):
+    def create(self, name):
         pass
 
 
 class DICTStorage(AbstractStorage):
     """ Storage DICT"""
 
-    def __init__(self, db: list , exception: BaseNotFoundException, model: Base):
+    def __init__(self, db: list , exception, model):
         self.db = db
         self.exception = exception
         self.model = model
@@ -99,16 +75,16 @@ class DICTStorage(AbstractStorage):
                 return idx, entity
         raise self.exception
 
-    def save(self, user):
-        self.db.append({user.pk: user})
+    def save(self, entity):
+        self.db.append({entity.pk: entity})
 
-    def create_user(self, name):
-        user = self.model(name)
-        self.save(user)
-        return user
+    def create(self, name):
+        entity = self.model(name)
+        self.save(entity)
+        return entity
 
     def delete(self, pk):
-        idx, user = self.get(pk)
+        idx, entity = self.get(pk)
         return self.db.pop(idx)
 
     def update(self, entity, params):

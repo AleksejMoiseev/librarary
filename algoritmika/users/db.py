@@ -5,8 +5,7 @@ class User(Base):
     count = 0
 
     def __init__(self, name):
-        super().__init__(name=name)
-        self.pk = self.count
+        super().__init__(name)
         User.count += 1
 
 

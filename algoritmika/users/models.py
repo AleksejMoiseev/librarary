@@ -1,6 +1,12 @@
-from algoritmika.core.generic import BaseView, AbstractStorage
+from algoritmika.core.generic import AbstractStorage, DICTStorage
 from algoritmika.users.db import db_users, User
 from algoritmika.users.exceptions import UserNotFoundException
+
+user_storage = DICTStorage(
+    db=db_users,
+    exception=UserNotFoundException(),
+    model=User
+)
 
 
 class UserBaseView(AbstractStorage):
@@ -19,12 +25,12 @@ class UserBaseView(AbstractStorage):
             user = list(d.values())[0]
             if user.pk == pk:
                 return idx, user
-        raise UserNotFoundException(msg="Wrong User_id")
+        raise UserNotFoundException()
 
     def save(self, user):
         self.db.append({user.pk: user})
 
-    def create_user(self, name):
+    def create(self, name):
         user = User(name)
         self.save(user)
         return user
@@ -46,7 +52,8 @@ class UserBaseView(AbstractStorage):
 
 
 if __name__ == '__main__':
-    idx, user = UserBaseView().get(5)
-    print(user)
-    user.update(**{"name": 'gggg'})
-    print(user)
+    # idx, user = UserBaseView().get(5)
+    # print(user)
+    # user.update(**{"name": 'gggg'})
+    # print(user)
+    print(user_storage.all())
