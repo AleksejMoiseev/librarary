@@ -5,6 +5,9 @@ from algoritmika.users.exceptions import (
     DataNotFoundException, UserNameNotFoundException
 )
 from algoritmika.users.models import UserBaseView, user_storage
+from algoritmika.users.service import UserService
+
+user_service = UserService(user_storage)
 
 
 class UserListCreateController(UserBaseView):
@@ -61,9 +64,9 @@ class UserRetrieveController(UserBaseView):
 
 class UserListCreateView:
     def on_get(self, req, resp):
-        limit = req.get_param_as_int('limit') or user_storage.get_len_list_entities()
+        limit = req.get_param_as_int('limit') or user_service.count()
         offset = req.get_param_as_int('offset') or 0
-        resp.body = user_storage.filter(limit=limit, offset=offset)
+        resp.body = user_service.get_users(limit=limit, offset=offset)
         resp.status = falcon.HTTP_200
 
     def on_post(self, req: Request, resp: Response):
@@ -73,7 +76,7 @@ class UserListCreateView:
         name = data.get('name')
         if not name:
             raise UserNameNotFoundException()
-        user = user_storage.create(name=name)
+        user = user_service.create(name=name)
         resp.body = {
             'id': user.pk,
             'name': user.name,
@@ -86,8 +89,8 @@ class UserRetrieveView:
         params = req.get_media()
         if not params:
             raise DataNotFoundException()
-        idx, user = user_storage.get(int(user_id))
-        user_updated = user_storage.update(user, params)
+        idx, user = user_service.get(int(user_id))
+        user_updated = user_service.update(user, params)
         resp.body = {
             'id': user_updated.pk,
             'name': user_updated.name,
@@ -98,7 +101,7 @@ class UserRetrieveView:
         self.on_put(req, resp, int(user_id))
 
     def on_get(self, req: Request, resp: Response, user_id):
-        idx, user = user_storage.get(int(user_id))
+        idx, user = user_service.get(int(user_id))
         resp.body = {
             'id': user.pk,
             'name': user.name,
@@ -106,6 +109,6 @@ class UserRetrieveView:
         resp.status = falcon.HTTP_200
 
     def on_delete(self, req: Request, resp: Response, user_id):
-        resp.body = user_storage.delete(int(user_id))
+        resp.body = user_service.delete(int(user_id))
         resp.status = falcon.HTTP_200
 

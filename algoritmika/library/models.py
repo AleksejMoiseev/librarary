@@ -1,12 +1,11 @@
-from algoritmika.books.models import books_storage
-from algoritmika.library.exceptions import BookNotFoundException, InccorectedRequestException
-from algoritmika.users.models import user_storage
+
+from algoritmika.library.exceptions import InccorectedRequestException
 
 
 class LibraryBase:
-    def __init__(self):
-        self.actors = user_storage
-        self.books = books_storage
+    def __init__(self, actors, books):
+        self.actors = actors
+        self.books = books
 
     def get_actors(self, limit, offset):
         return self.actors.filter(limit=limit, offset=offset)

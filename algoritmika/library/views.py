@@ -5,8 +5,10 @@ from algoritmika.library.constans import Action
 from algoritmika.library.exceptions import PATHNotFoundException
 from algoritmika.library.models import LibraryBase
 from algoritmika.users.exceptions import DataNotFoundException
+from algoritmika.users.models import user_storage
+from algoritmika.books.models import books_storage
 
-library = LibraryBase()
+library = LibraryBase(actors=user_storage, books=books_storage)
 
 
 class LibraryCreateView:
