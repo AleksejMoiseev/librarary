@@ -1,6 +1,6 @@
-.idea/
+.idea
 algoritmika/__pycache__/
- __pycache__/
+__pycache__
 algoritmika/books/__pycache__/
 algoritmika/core/__pycache__/
 algoritmika/issues/__pycache__/
